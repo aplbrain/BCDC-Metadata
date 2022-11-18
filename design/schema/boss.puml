@@ -11,51 +11,42 @@ class Project {
   Year: Date!
   Public: Boolean!
   Species: [Species]!
-  Publications: [Publication]!
+  PublicationDOIs: [Publication]!
   Links: [Link]
-  UniqueIdentifier: String!
   License: [License]!
-  Contributor: [Contributor]!
-  Acknowledgements: String
-  Funding: [Funding]
+  Contributor: [Contributor]
+  GrantName: [FundingName]
+  GrantNumber: [String]
   DateCreated: Date!
   DateModified: Date
-  DOI: DOI
-  --
-  ImagingModalities: [ImagingModalityGeneral]!
-  ImagingModalitySpecific: [ImagingModalitySpecific]
-  DataTypes: [DataType]
-  ImageLocations: [BrainLocation]!
+  Protocol: DOI
+  BossDBURIs: [String]!
   --
   ImageBanner: String!
   ImageTile: String!
   ImageHero: String
-  ImageHeroPosition: String
-  Media: [String]
   --
   Collections: [Collection]
   Experiments: [Experiment]
   Channels: [Channel]
 }
 
-Project::ImageLocations *-- BrainLocation
-Project::Publications *-- Publication
+Project::PublicationDOIs *-- Publication
 Project::Species *-- Species
 Project::Links *-- Link
 Project::Contributor *-- Contributor
 Project::License *-- License
-Project::Funding *-- Funding
-Project::ImagingModalities *-- ImagingModalityGeneral
-Project::ImagingModalitySpecific *-- ImagingModalitySpecific
-Project::DataTypes *-- DataType
+Project::GrantName *-- FundingName
 Project::Collections *-- Collection
 Project::Experiments *-- Experiment
 Project::Channels *-- Channel
-Project::DOI *-- DOI
+Project::Protocol *-- DOI
 
 class Collection {
   ID: String!
   Name: String!
+  BossDBURI: String
+  Title: String
   Description: String!
   Public: Boolean!
   Creator: [User]!
@@ -63,8 +54,8 @@ class Collection {
   DateCreated: Date!
   DateModified: Date
   License: [License]!
-  Acknowledgements: String
-  DOI: DOI
+  Organization: [String]
+  GrantNumber: [String]
   Version: String
   --
   Species: [Species]
@@ -75,24 +66,38 @@ class Collection {
 Collection::Creator *-- User
 Collection::Contributors *-- Contributor
 Collection::License *-- License
-Collection::DOI *-- DOI
 Collection::Species *-- Species
 Collection::Experiments *-- Experiment
 
 class Experiment {
   ID: String!
   Name: String!
+  BCDCCollection: String
+  BossDBURI: String!
+  SampleType: String
   Description: String!
   Public: Boolean!
-  Creator: [User]!
+  Investigator: [User]!
   Contributors: [Contributor]!
   DateCreated: Date!
   DateModified: Date
   License: License!
   --
-  Species: Species!
-  ImageLocation: BrainLocation!
-  Protocol: Link!
+  SpeciesCommonName: Species!
+  SpeciesTaxonomy: String
+  Genotype: String
+  SubjectID: String
+  Age: String
+  Sex: String
+  Modality: String
+  ImageLocation: BrainLocation
+  Protocol: DOI
+  Technique: ImageModalityGeneral
+  AnatomicalStructure: [String]
+  ParentSpecimen: [String]
+  ParentSpecimenType: String
+  SubspecimenType: String
+  SubspecimenQuantity: Number
   --
   CoordinateFrame: CoordinateFrame!
   --
@@ -101,7 +106,7 @@ class Experiment {
   Version: String
 }
 
-Experiment::Creator *-- User
+Experiment::Investigator *-- User
 Experiment::Contributors *-- Contributor
 Experiment::License *-- License
 Experiment::ImageLocation *-- BrainLocation
@@ -112,6 +117,9 @@ Experiment::Channels *-- Channel
 class Channel{
   ID: String!
   Name: String!
+  BCDCCollection: String
+  BossDBURI: String
+  ArchiveURL: Link
   Description: String!
   Public: Boolean!
   Creator: [User]!
@@ -119,11 +127,8 @@ class Channel{
   DateCreated: Date!
   DateModified: Date
   License: License!
-  ImagingModality: ImagingModalityGeneral!
-  ImagingModalitySpecific: ImagingModalitySpecific
+  Technique: ImagingModalityGeneral!
   ImageResolution: ImageResolution!
-  ChannelType: ChannelType!
-  DataType: DataType!
   VisualationColor: String
   ImageExtent: Number
   --
@@ -135,11 +140,11 @@ class Channel{
 Channel::Creator *-- User
 Channel::Contributors *-- Contributor
 Channel::License *-- License
-Channel::ImagingModalityGeneral *-- ImagingModalityGeneral
-Channel::ImagingModalitySpecific *-- ImagingModalitySpecific
+Channel::Technique *-- ImagingModalityGeneral
 Channel::ImageResolution *-- ImageResolution
 Channel::ChannelType *-- ChannelType
 Channel::DataType *-- DataType
+Channel::ArchiveURL *-- Link
 
 class BrainLocation {
   Name: String!
@@ -168,9 +173,9 @@ class Link {
   URI: [String]
 }
 
-class Funding {
+class FundingName {
   Sponsor: [String]
-  Grant: [String]
+  GrantName: [String]
 
 }
 
